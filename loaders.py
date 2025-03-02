@@ -62,7 +62,7 @@ class ItemLoader:
         chunk_count = (len(self.dataset) // CHUNK_SIZE) +1 
 
         with ProcessPoolExecutor(max_workers=workers) as pool:
-            for batch in tqdm(pool.map(self.from_chunk, self.chunk_generator), total=chunk_count):
+            for batch in tqdm(pool.map(self.from_chunk, self.chunk_generator()), total=chunk_count):
                 results.extend(batch)
 
         for result in results:
@@ -70,7 +70,7 @@ class ItemLoader:
 
         return results
     
-    def load(self, workers = 4):
+    def load(self, workers = 8):
         """
         Load in this dataset; the workers parameter specifies how many processes
         should work on loading and scrubbing the data
@@ -83,4 +83,6 @@ class ItemLoader:
         finish = datetime.now()
 
         print(f'Complete {self.name} with {len(result):,} datapoints in {(finish-start).total_seconds()/60:.1f} mins', flush=True)
+
+        return result
         
